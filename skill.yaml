@@ -1,6 +1,15 @@
 name: universal-story-workflow
 title: 通用故事工作流
-description: 通用、可复用的故事工作流技能仓库。用户只给一句话提示，就能完整构建一个故事，先输出文字内容，审核通过后再做视频。主打娱乐中学习，后期有对话和旁白，作语言教学用。适用于任何原创 IP：海陆空小队、芝麻绿豆，或新立的角色。用户说“出一集……”“讲一个……的故事”“用通用工作流做……”时使用。先出文字、不先烧积分生成视频是本技能的硬规则。
+description: 通用剧集脚本工作流技能仓库。用户只给一句话提示，就能完整构建一个故事，先输出文字内容，审核通过后再做视频。适用剧集、电影、短视频、系列预告、世界观概念片，中国典故、美国故事、原创 IP 都走同一流程。安全只是技能里的说明文件，不参与审计；教学、少儿是可选模式。用户说“出一集……”“讲一个……的故事”“用通用工作流做……”时使用。先出文字、不先烧积分生成视频是本技能的硬规则。
 category: Media
+triggers:
+  - 出一集
+  - 讲一个故事
+  - 用通用工作流做
+  - 镜头卡
+  - 旁白连续
+  - 世界空间线
+  - 风格
+  - 先出文字
 include_in_prompt: true
-source: original, built from hailukong BIBLE v1.0 lessons + children-story patterns + language-teaching design
+source: original, built from hailukong BIBLE v1.0 lessons + IP manual (shot language, style profiles, prompt encapsulation) + general series scripting

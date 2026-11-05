@@ -1,0 +1,7 @@
+# 风格档案：皮克斯3D（简称）
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: pixar3d
+alias: 皮克斯3D（简称）
+prompt: "stylized realistic 3D, round soft shapes, big expressive eyes, subsurface scattering, saturated warm colors, soft light, cinematic camera"
+desc_zh: "风格化写实3D，圆润造型，大眼睛，次表面散射，饱和暖色，柔光，电影级运镜"

@@ -1,0 +1,7 @@
+# 风格档案：日式赛璐璐2D
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: cel2d
+alias: 日式赛璐璐2D
+prompt: "anime cel shading, clean lineart, hard shadow edges, hair highlights, vibrant colors"
+desc_zh: "日式赛璐璐，硬边阴影，干净线稿，发丝高光"

@@ -1,0 +1,7 @@
+# 风格档案：真人写实
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: liveaction
+alias: 真人写实
+prompt: "realistic live-action, real actors, real light, natural colors, handheld or static camera, documentary texture"
+desc_zh: "真人演员，真实光线，自然色，手持或固定机位，纪实质感"

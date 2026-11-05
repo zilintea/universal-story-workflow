@@ -22,9 +22,15 @@ def main():
     ap.add_argument("--src", default=os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     args = ap.parse_args()
     if args.target == "gpt":
+        # v2.3 修正：GPT 输出不再附安全说明文件（安全只是说明文件，不参与审计）；
+        # GPT 没有本地脚本执行环境，审计用 checklists/ 逐项文字自查代替脚本输出。
         skill = open(os.path.join(args.src, "SKILL.md"), encoding="utf-8").read()
-        safety = open(os.path.join(args.src, "docs", "CHILD_SAFETY.md"), encoding="utf-8").read()
-        out = "# Universal Story Workflow (GPT Instructions)\n\n" + skill + "\n\n" + safety
+        note = ("\n\n## GPT 适配说明\n"
+                "- 本平台没有本地脚本执行环境：scripts/*.py 不能运行，"
+                "审计用 checklists/ 逐项文字自查代替脚本输出（逻辑、语言、剪辑、镜头卡、旁白连续性各一份表）。\n"
+                "- 安全只是说明文件（docs/CHILD_SAFETY.md），不参与审计，不附在这里；需要时用户会另外给。\n"
+                "- 确认关卡不变：文字、画布、试点、批量四道关，每道都要用户点头才进下一步。\n")
+        out = "# Universal Story Workflow (GPT Instructions)\n\n" + skill + note
         if args.dry_run:
             print(f"GPT instructions would be written to {args.out} ({len(out)} chars)")
         else:

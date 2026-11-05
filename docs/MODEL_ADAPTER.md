@@ -1,7 +1,7 @@
 # 多模型自适应（GPT / WorkBuddy / Claude / Muse）
 
 ## 原则
-- 流程、标准、安全线、审计表是模型无关的，不改。
+- 流程、标准、审计表是模型无关的，不改。
 - 适配层只改三样：技能文件放哪里、调用命令怎么写、输出格式怎么对齐（JSON / Markdown）。
 
 ## 导入命令（引入脚本技能命令）
@@ -30,7 +30,7 @@ git clone <你的仓库地址> universal-story-workflow
 ### WorkBuddy
 ```bash
 git clone <你的仓库地址> universal-story-workflow
-# 把仓库交给 WorkBuddy，指令写：一句话主题，按 universal-story-workflow 的 SKILL.md 跑完文字第一、双审计、三审计
+# 把仓库交给 WorkBuddy，指令写：一句话主题，按 universal-story-workflow 的 SKILL.md 跑完文字第一、七审计、四道确认关卡
 # WorkBuddy 自主执行的部分：写文字稿、跑审计脚本、生成故事板提示词
 ```
 
@@ -42,5 +42,5 @@ python3 scripts/install_skill.py --target workbuddy
 python3 scripts/install_skill.py --target gpt --out ./gpt_instructions.md
 ```
 - `--target muse/claude/workbuddy`：复制整个仓库到对应技能目录（dry-run 时加 `--dry-run`，只打印路径不复制）
-- `--target gpt`：不复制目录，生成一份可粘贴的 Instructions 文件（SKILL.md + 安全线 + 一致性要点，紧凑版）
+- `--target gpt`：不复制目录，生成一份可粘贴的 Instructions 文件（SKILL.md + GPT 适配说明，紧凑版；不附安全说明文件，审计用 checklists/ 文字自查代替脚本）
 - 适配差异：GPT 没有本地脚本执行环境时，审计表用文字自查代替脚本输出；Claude / WorkBuddy / Muse 有本地执行环境时，优先跑 scripts/edit_check.py 和 check_story.py 的实际输出

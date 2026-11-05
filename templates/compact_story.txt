@@ -1,4 +1,5 @@
-TITLE: Fire! Run First! | LANG: EN | LEVEL: beginner | FORMAT: short 60s 16:9
+# 格式示例：本文件是紧凑模板的示例，时长以本集参数 D 为准（示例 D=30s 时 3 段；D=60s 时 6 段）
+TITLE: Fire! Run First! | LANG: EN | LEVEL: beginner | FORMAT: short [D]s 16:9
 CHARS: [C1, C2, C3, C4, C5]（本集角色名只写在锁定表里，这里只用 ID）
 CHARACTER_DNA: C1: [体型、主色、标志物、服装，一句话，逐字复用] | C2: [同上]
 SCENES: [S1 kitchen, S2 grass path, S3 river bay]

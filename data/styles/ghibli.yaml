@@ -1,0 +1,7 @@
+# 风格档案：吉卜力（简称）
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: ghibli
+alias: 吉卜力（简称）
+prompt: "hand-painted watercolor texture, soft outlines, blue-green palette, natural light, slow push-in, warm everyday details"
+desc_zh: "手绘水彩质感，柔和轮廓，蓝绿主色，自然光，缓慢推镜，日常细节"
