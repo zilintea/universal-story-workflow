@@ -1,0 +1,7 @@
+# Language profile: Korean
+code: ko
+name: Korean
+word_unit: space
+dialogue_max_words: 8
+narration_max_words: 12
+counting: whitespace-token, case-insensitive

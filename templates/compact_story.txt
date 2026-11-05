@@ -1,0 +1,15 @@
+TITLE: Fire! Run First! | LANG: EN | LEVEL: beginner | FORMAT: short 60s 16:9
+CHARS: [C1, C2, C3, C4, C5]（本集角色名只写在锁定表里，这里只用 ID）
+CHARACTER_DNA: C1: [体型、主色、标志物、服装，一句话，逐字复用] | C2: [同上]
+SCENES: [S1 kitchen, S2 grass path, S3 river bay]
+ITEMS: [I1 pot, I2 scarf, I3 towel]
+VOCAB: fire/smoke/run/shout/safe | PATTERNS: Fire! Run! / Don't go back!
+WARNING: Do not go back for things in a fire.
+SHOTS:
+1|S1|C1|cook, smoke rises|Nar: C1 cooks.|10s
+2|S1|C1|smoke billows, cover mouth, run to door|Dia: Fire!|10s
+3|S2|C1,C5|run out, magpie flies high|Dia: Fire! Run!|10s
+4|S2|C2,C3,C4|run to safe place|Nar: Friends run out.|10s
+5|S3|C1,C2,C3,C4|friends hold C1 back|Dia: Don't go back!|10s
+6|S3|C1,C2,C3,C4,C5|count, all safe|Dia: We are safe!|10s
+SAFETY: pass 8/8 | LOGIC: pass | LANGUAGE: pass | EDIT: pass (edit_check.py)

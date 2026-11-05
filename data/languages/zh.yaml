@@ -1,0 +1,7 @@
+# Language profile: Chinese
+code: zh
+name: Chinese
+word_unit: character
+dialogue_max_words: 12
+narration_max_words: 20
+counting: character-count

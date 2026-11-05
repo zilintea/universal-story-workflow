@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:04,500
+Sesame cooks soup in the kitchen hut.
+
+2
+00:00:05,000 --> 00:00:09,500
+Smoke comes from the pot.
+
+3
+00:00:10,000 --> 00:00:14,500
+More smoke comes.
+
+4
+00:00:15,000 --> 00:00:19,500
+Sesame covers his mouth and runs.
+
+5
+00:00:20,000 --> 00:00:24,500
+He shouts, Fire! Run!
+
+6
+00:00:25,000 --> 00:00:29,500
+Magpie flies high and shouts too.
+
+7
+00:00:30,000 --> 00:00:34,500
+Friends run out.
+
+8
+00:00:35,000 --> 00:00:39,500
+They run to the river bay.
+
+9
+00:00:40,000 --> 00:00:44,500
+Friends shout, Don't go back!
+
+10
+00:00:45,000 --> 00:00:49,500
+People are safe first.
+
+11
+00:00:50,000 --> 00:00:54,500
+They count. One, two, three, four, five.
+
+12
+00:00:55,000 --> 00:00:59,500
+All are safe. We are safe!

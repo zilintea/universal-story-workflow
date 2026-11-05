@@ -1,0 +1,7 @@
+# Language profile: English (example profile, not a hardcode in SKILL.md)
+code: en
+name: English
+word_unit: space
+dialogue_max_words: 8
+narration_max_words: 12
+counting: word-boundary, case-insensitive
