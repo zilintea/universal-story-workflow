@@ -12,6 +12,12 @@
   --lang 不给时读故事 JSON 的 language 字段，再没有时按 zh 走。
   查语言一致性：zh 的对话/旁白不得含拉丁字母单词；en 的不得含 CJK 字符；
   ko 须含韩文，ja 须含假名。见 docs/LANGUAGE_LOCK.md。
+默认值（v3.0）：人物类剧集用户没特别指定时，目标语言一律中文，人物形象一律东方人物；
+  只在用户明确指定其他语言或非中国背景时才改。见 docs/CHARACTER_DEFAULTS.md。
+  查人物形象：story.json 的 characters 存在时，每位人物 appearance 非空；
+  character_origin 未写或为 eastern 时 appearance 须含东方标记（黑发/黑眼睛/东亚/东方/亚洲/黄皮肤/中国面孔）；
+  origin 明确写了其他值时不查标记；characters 缺失时跳过。
+  查国家形象标志：正文 + 对话里不得出现国旗、国徽、旗帜等（FLAG_WORDS）。
 语言参数：目标语言、句长上限、词数规则一律读 data/languages/<code>.yaml，
 脚本里不写死任何一种语言。发音和语音合成不在本技能范围内，用户自行合成或调用语音 API。
 文化锚点（v2.7）：故事 JSON 可带可选字段 culture（五类：clothing/food/props/landscape/colors），
@@ -66,6 +72,33 @@ def check_language(story, code):
         return [("语言一致性：ja 对话/旁白含假名", bool(re.search(r"[\u3040-\u30ff]", text)))]
     return []
 
+EASTERN_MARKERS = ["黑发", "黑眼睛", "东亚", "东方", "亚洲", "黄皮肤", "中国面孔"]
+FLAG_WORDS = ["国旗", "国徽", "旗帜", "五星红旗", "星条旗", "国歌"]
+
+def check_characters(story):
+    """人物形象（v3.0）：characters 存在时查；缺失时跳过（v3.0 之前的旧稿不受影响）。
+    每位人物 appearance 非空；character_origin 未写或为 eastern 时，appearance 须含东方标记；
+    origin 明确写了其他值时不查标记。"""
+    chars = story.get("characters")
+    if not chars:
+        return []
+    origin = story.get("character_origin") or "eastern"
+    results = []
+    for c in chars:
+        ap = (c.get("appearance") or "").strip()
+        name = c.get("name") or c.get("id") or "?"
+        results.append((f"人物 {name} 形象已写（appearance 非空）", bool(ap)))
+        if origin == "eastern":
+            results.append((f"人物 {name} 形象含东方标记（默认东方人物）",
+                            any(m in ap for m in EASTERN_MARKERS)))
+    return results
+
+def check_flags(story):
+    """国家形象标志（v3.0）：正文 + 对话里不得出现国旗、国徽、旗帜等。"""
+    text = story.get("text", "") + " ".join(story.get("dialogue", []))
+    hit = [w for w in FLAG_WORDS if w in text]
+    return [("画面与文字无国家形象标志（国旗、国徽、旗帜等）", not hit)]
+
 def check(story, prof, mode="general"):
     text = story.get("text", "") + " ".join(story.get("dialogue", []))
     low = text.lower()
@@ -75,6 +108,8 @@ def check(story, prof, mode="general"):
     results.append(("目标语言已写清（字段 language 非空）", bool(story.get("language"))))
     results.extend(check_culture(story))
     results.extend(check_language(story, prof["code"]))
+    results.extend(check_characters(story))
+    results.extend(check_flags(story))
     if mode == "teaching":
         results.append(("词汇 ≤5 个", len(story.get("vocab", [])) <= 5))
         results.append(("句型 ≤2 个", len(story.get("patterns", [])) <= 2))

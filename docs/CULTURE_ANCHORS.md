@@ -28,6 +28,7 @@
 2. 每段视频提示词逐字复用文化锚点（脚本 `scripts/apply_culture.py` 自动拼，见下）。
 3. 审计：`scripts/check_story.py` 查 culture 字段——五类齐全、每类非空、不含空词（“中国元素”“西方元素”“中国风”“东方元素”单独出现即不通过）；`checklists/continuity_audit.md` 核对每段提示词里确实带了锚点。
 4. 西方题材同理：在同一位置换西方锚点，不用另改技能。
+5. **文化锚点不含国家形象标志（v3.0）：国旗、国徽、旗帜等一律不进锚点、不进提示词、不进画面，见 `docs/CHARACTER_DEFAULTS.md`。**
 
 ## 脚本
 
