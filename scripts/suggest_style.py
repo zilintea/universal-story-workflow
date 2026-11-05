@@ -21,7 +21,7 @@ TABLE = [
      "3D 质感合科技感", None),
     (("历史", "写实", "传记"), "liveaction", "inkwash",
      "真人写实最可信", None),
-    (("恐怖", "悬疑", "惊悚"), "liveaction", "cel2d",
+    (("恐怖", "悬疑", "惊悚", "鬼", "吓人"), "liveaction", "cel2d",
      "恐怖靠低调打光和负空间，动画向才用扁平 2D", "恐怖惊悚片段"),
     # 以下按场景模板匹配（见 docs/SCENARIO_TEMPLATES.md）：题材已定风格时优先用场景行
     (("汽车", "赛车", "公路"), "liveaction", "pixar3d",

@@ -17,7 +17,15 @@
   查人物形象：story.json 的 characters 存在时，每位人物 appearance 非空；
   character_origin 未写或为 eastern 时 appearance 须含东方标记（黑发/黑眼睛/东亚/东方/亚洲/黄皮肤/中国面孔）；
   origin 明确写了其他值时不查标记；characters 缺失时跳过。
+多语言对话（v3.2）：旁白始终用目标语言；对话每句按说话人的语言查——
+  显式 lang > character_languages[说话人] > 目标语言；character_languages 的值
+  须有语言档案（data/languages/<code>.yaml），没有即不通过。见 docs/LANGUAGE_LOCK.md。
   查国家形象标志：正文 + 对话里不得出现国旗、国徽、旗帜等（FLAG_WORDS）。
+三视图硬门（v3.1）：故事 JSON 有 characters 字段时，character_sheet 字段必填，
+  且指向的三视图文件必须存在（相对路径按 story.json 所在目录解析）；
+  缺字段、路径为空、文件不存在，任一即不通过，不进故事板。
+  characters 缺失时跳过（v3.1 之前的旧稿不受影响）。见 docs/CHARACTER_CONSISTENCY.md。
+  生成视频的参考图必须是三视图，不许拿 9 格故事板当人物参考。
 语言参数：目标语言、句长上限、词数规则一律读 data/languages/<code>.yaml，
 脚本里不写死任何一种语言。发音和语音合成不在本技能范围内，用户自行合成或调用语音 API。
 文化锚点（v2.7）：故事 JSON 可带可选字段 culture（五类：clothing/food/props/landscape/colors），
@@ -57,20 +65,50 @@ def check_culture(story):
         results.append((f"文化锚点 {key} 已写具体物", bool(v) and v not in EMPTY_WORDS))
     return results
 
-def check_language(story, code):
-    """语言一致性（v2.8）：对话 + 旁白必须与目标语言一致。"""
-    text = story.get("text", "") + " ".join(story.get("dialogue", []))
+def dialogue_lines(story):
+    """对话行归一化：条目可是纯字符串（目标语言），也可以是 {"speaker": "C1", "text": "..."}，
+    还可带 "lang" 显式指定本句语言。返回 [(text, speaker, explicit_lang)]。"""
+    out = []
+    for d in story.get("dialogue", []):
+        if isinstance(d, dict):
+            out.append((d.get("text", ""), d.get("speaker"), d.get("lang")))
+        else:
+            out.append((str(d), None, None))
+    return out
+
+def lang_rule(code, text):
+    """单句语言规则（v2.8）：返回 (通过, 说明)。未知语言无规则可查，返回通过。"""
     if code == "zh":
         latin = re.findall(r"[A-Za-z]+", text)
-        return [("语言一致性：zh 对话/旁白无拉丁字母单词", not latin)]
+        return (not latin, "zh 无拉丁字母单词")
     if code == "en":
         cjk = re.findall(r"[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]", text)
-        return [("语言一致性：en 对话/旁白无 CJK 字符", not cjk)]
+        return (not cjk, "en 无 CJK 字符")
     if code == "ko":
-        return [("语言一致性：ko 对话/旁白含韩文", bool(re.search(r"[\uac00-\ud7af]", text)))]
+        return (bool(re.search(r"[\uac00-\ud7af]", text)), "ko 含韩文")
     if code == "ja":
-        return [("语言一致性：ja 对话/旁白含假名", bool(re.search(r"[\u3040-\u30ff]", text)))]
-    return []
+        return (bool(re.search(r"[\u3040-\u30ff]", text)), "ja 含假名")
+    return (True, f"{code} 无规则可查")
+
+def check_language(story, code):
+    """语言一致性（v2.8）：对话 + 旁白必须与目标语言一致。
+    多语言对话（v3.2）：旁白始终用目标语言；对话每句按说话人的语言查——
+    显式 lang > character_languages[说话人] > 目标语言。见 docs/LANGUAGE_LOCK.md。"""
+    results = []
+    ok, note = lang_rule(code, story.get("text", ""))
+    results.append((f"语言一致性：旁白 {note}", ok))
+    char_langs = story.get("character_languages") or {}
+    for text, speaker, explicit in dialogue_lines(story):
+        eff = explicit or (char_langs.get(speaker) if speaker else None) or code
+        ok, note = lang_rule(eff, text)
+        who = f"（{speaker}，{eff}）" if speaker or explicit else ""
+        results.append((f"语言一致性：对话{who} {note}", ok))
+    if char_langs:
+        langs_dir = Path(__file__).resolve().parent.parent / "data" / "languages"
+        for cid, lang in char_langs.items():
+            results.append((f"人物 {cid} 的语言 {lang} 有语言档案（data/languages/{lang}.yaml）",
+                            (langs_dir / f"{lang}.yaml").is_file()))
+    return results
 
 EASTERN_MARKERS = ["黑发", "黑眼睛", "东亚", "东方", "亚洲", "黄皮肤", "中国面孔"]
 FLAG_WORDS = ["国旗", "国徽", "旗帜", "五星红旗", "星条旗", "国歌"]
@@ -95,12 +133,25 @@ def check_characters(story):
 
 def check_flags(story):
     """国家形象标志（v3.0）：正文 + 对话里不得出现国旗、国徽、旗帜等。"""
-    text = story.get("text", "") + " ".join(story.get("dialogue", []))
+    text = story.get("text", "") + " ".join(t for t, _, _ in dialogue_lines(story))
     hit = [w for w in FLAG_WORDS if w in text]
     return [("画面与文字无国家形象标志（国旗、国徽、旗帜等）", not hit)]
 
-def check(story, prof, mode="general"):
-    text = story.get("text", "") + " ".join(story.get("dialogue", []))
+def check_character_sheet(story, base_dir):
+    """三视图硬门（v3.1）：有 characters 字段时，character_sheet 必填且文件必须存在。
+    相对路径按 story.json 所在目录解析。characters 缺失时跳过，旧稿不受影响。"""
+    if not story.get("characters"):
+        return []
+    sheet = (story.get("character_sheet") or "").strip()
+    if not sheet:
+        return [("三视图文件已写（字段 character_sheet 非空）", False)]
+    p = Path(sheet)
+    if not p.is_absolute() and base_dir:
+        p = Path(base_dir) / p
+    return [("三视图文件存在（character_sheet 指向的文件可读）", p.is_file())]
+
+def check(story, prof, mode="general", base_dir=None):
+    text = story.get("text", "") + " ".join(t for t, _, _ in dialogue_lines(story))
     low = text.lower()
     results = []
     results.append(("主角唯一（字段非空）", bool(story.get("protagonist"))))
@@ -110,11 +161,12 @@ def check(story, prof, mode="general"):
     results.extend(check_language(story, prof["code"]))
     results.extend(check_characters(story))
     results.extend(check_flags(story))
+    results.extend(check_character_sheet(story, base_dir))
     if mode == "teaching":
         results.append(("词汇 ≤5 个", len(story.get("vocab", [])) <= 5))
         results.append(("句型 ≤2 个", len(story.get("patterns", [])) <= 2))
         results.append((f"对话每句 ≤{prof['dialogue_max_words']} 词（{prof['code']} 档案）",
-                        all(count_words(d, prof["word_unit"]) <= prof["dialogue_max_words"] for d in story.get("dialogue", []))))
+                        all(count_words(t, prof["word_unit"]) <= prof["dialogue_max_words"] for t, _, _ in dialogue_lines(story))))
         results.append(("警示点已写清（字段 warning 非空）", bool(story.get("warning"))))
     for word in story.get("vocab", []) if mode == "teaching" else []:
         if re.search(r'[a-zA-Z]', word):
@@ -136,9 +188,10 @@ if __name__ == "__main__":
     story = json.load(open(args[0], encoding="utf-8"))
     lang = lang or story.get("language") or "zh"  # v2.8：不默认英语
     prof = load_profile(lang)
+    base_dir = str(Path(args[0]).resolve().parent)  # v3.1：三视图相对路径按 story.json 所在目录解析
     print(f"模式：{mode}")
     ok = True
-    for name, passed in check(story, prof, mode):
+    for name, passed in check(story, prof, mode, base_dir):
         print(("通过 " if passed else "不通过 ") + name)
         ok = ok and passed
     print("结论：" + ("通过" if ok else "不通过，改骨架，不生成视频"))
