@@ -8,8 +8,15 @@
 模式：general（默认，通用版）：只查主角、主题、目标语言、反转伏笔；
   警示点、词汇 ≤5、词汇出现 ≥3 次、句型 ≤2 只在 teaching 模式查。
   （v2.3 修正：v2.2 前默认查警示点，通用故事没警示点就被打回，是教学要求漏进通用流程。）
+语言锁定（v2.8）：目标语言 = 用户那句话的语言，不默认英语；
+  --lang 不给时读故事 JSON 的 language 字段，再没有时按 zh 走。
+  查语言一致性：zh 的对话/旁白不得含拉丁字母单词；en 的不得含 CJK 字符；
+  ko 须含韩文，ja 须含假名。见 docs/LANGUAGE_LOCK.md。
 语言参数：目标语言、句长上限、词数规则一律读 data/languages/<code>.yaml，
 脚本里不写死任何一种语言。发音和语音合成不在本技能范围内，用户自行合成或调用语音 API。
+文化锚点（v2.7）：故事 JSON 可带可选字段 culture（五类：clothing/food/props/landscape/colors），
+存在时查五类齐全、每类非空、不含空词（“中国元素”“西方元素”“东方元素”“中国风”单独出现即不通过）；
+不存在时跳过，通用故事不受影响。见 docs/CULTURE_ANCHORS.md。
 """
 import sys, json, re
 from pathlib import Path
@@ -32,6 +39,33 @@ def count_words(s, unit):
         return len(s.strip())
     return len(s.split())
 
+EMPTY_WORDS = ("中国元素", "西方元素", "东方元素", "中国风", "西式", "中式")
+
+def check_culture(story):
+    culture = story.get("culture")
+    if not culture:
+        return []  # 通用故事跳过
+    results = []
+    for key in ("clothing", "food", "props", "landscape", "colors"):
+        v = str(culture.get(key, "")).strip()
+        results.append((f"文化锚点 {key} 已写具体物", bool(v) and v not in EMPTY_WORDS))
+    return results
+
+def check_language(story, code):
+    """语言一致性（v2.8）：对话 + 旁白必须与目标语言一致。"""
+    text = story.get("text", "") + " ".join(story.get("dialogue", []))
+    if code == "zh":
+        latin = re.findall(r"[A-Za-z]+", text)
+        return [("语言一致性：zh 对话/旁白无拉丁字母单词", not latin)]
+    if code == "en":
+        cjk = re.findall(r"[\u4e00-\u9fff\u3040-\u30ff\uac00-\ud7af]", text)
+        return [("语言一致性：en 对话/旁白无 CJK 字符", not cjk)]
+    if code == "ko":
+        return [("语言一致性：ko 对话/旁白含韩文", bool(re.search(r"[\uac00-\ud7af]", text)))]
+    if code == "ja":
+        return [("语言一致性：ja 对话/旁白含假名", bool(re.search(r"[\u3040-\u30ff]", text)))]
+    return []
+
 def check(story, prof, mode="general"):
     text = story.get("text", "") + " ".join(story.get("dialogue", []))
     low = text.lower()
@@ -39,6 +73,8 @@ def check(story, prof, mode="general"):
     results.append(("主角唯一（字段非空）", bool(story.get("protagonist"))))
     results.append(("主题一句话（字段非空）", bool(story.get("theme"))))
     results.append(("目标语言已写清（字段 language 非空）", bool(story.get("language"))))
+    results.extend(check_culture(story))
+    results.extend(check_language(story, prof["code"]))
     if mode == "teaching":
         results.append(("词汇 ≤5 个", len(story.get("vocab", [])) <= 5))
         results.append(("句型 ≤2 个", len(story.get("patterns", [])) <= 2))
@@ -55,7 +91,7 @@ def check(story, prof, mode="general"):
     return results
 
 if __name__ == "__main__":
-    lang = "en"
+    lang = None
     mode = "general"
     args = sys.argv[1:]
     if "--lang" in args:
@@ -63,7 +99,8 @@ if __name__ == "__main__":
     if "--mode" in args:
         mode = args[args.index("--mode") + 1]
     story = json.load(open(args[0], encoding="utf-8"))
-    prof = load_profile(story.get("language", lang))
+    lang = lang or story.get("language") or "zh"  # v2.8：不默认英语
+    prof = load_profile(lang)
     print(f"模式：{mode}")
     ok = True
     for name, passed in check(story, prof, mode):

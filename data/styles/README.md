@@ -8,6 +8,6 @@
 不进图生图/图生视频/文生视频的提示词。
 用户明确要求原样写品牌名时，才按用户的话写，并记在文字稿里。
 
-常用风格先写在这里：ghibli、pixar3d、stopmotion、liveaction、inkwash、cel2d。
+常用风格先写在这里：ghibli、pixar3d、disneypixar3d、stopmotion、liveaction、inkwash、cel2d、guoman3d（v2.9 新增，3D国漫CG：金青色调、丁达尔光束、灵力粒子、水墨粒子，仙侠/神话主推）。
 用户新说一个风格，就新加一张卡，不改流程。
 新风格卡只写 5 行：质感、人物、颜色、光线、运镜。

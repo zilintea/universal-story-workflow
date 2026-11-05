@@ -1,0 +1,7 @@
+# 风格档案：迪士尼与皮克斯3D（简称）
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: disneypixar3d
+alias: 迪士尼与皮克斯3D（简称）
+prompt: "high-gloss stylized 3D animation, round soft shapes, big expressive eyes, detailed fur and fabric, subsurface scattering, saturated warm colors, soft golden light, cinematic camera, heartfelt family-film look"
+desc_zh: "高光泽风格化3D动画，圆润造型，大眼睛，精细毛发与布料，次表面散射，饱和暖色，柔和金光，电影级运镜，合家欢质感"

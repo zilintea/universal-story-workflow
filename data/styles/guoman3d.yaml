@@ -1,0 +1,8 @@
+# 风格档案：3D国漫CG（简称）
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+# 来源：seedance-shot-design《仙侠/修真》导演风格行（MIT-0）改写为描述性字段。
+id: guoman3d
+alias: 3D国漫CG（简称）
+prompt: "Chinese 3D animation CG render, golden-cyan palette, god rays through clouds, spiritual particles floating, ink-particle effects, misty fairyland, aerial camera flying through clouds, flowing robes, ethereal atmosphere"
+desc_zh: "中国风3D动画CG渲染，金青色调，丁达尔光束穿云，灵力粒子漂浮，水墨粒子特效，云雾缭绕仙境，航拍穿越云海，衣袂飘逸"
