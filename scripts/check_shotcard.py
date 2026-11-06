@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
-"""镜头卡审计（v1.9）：每镜必填字段，缺一项不进视频。
+"""镜头卡审计（v1.9；v3.7：必填字段 14 → 16，加 moving、move_reason）。
 用法：python3 scripts/check_shotcard.py shots.json
 输入：[{"id":1,"scale":"MCU","angle":"EL","camera_side":"left","move":"STATIC",
 "comp":"THIRDS","light":"top-left hard 5600K","color":"grey-brown 70%",
-"action_start":"...","action_end":"...","env":"...","first":"...","last":"...","emotion":7}]
+"action_start":"...","action_end":"...","moving":"...","move_reason":"...",
+"env":"...","first":"...","last":"...","emotion":7}]
 动态画布（v3.2，见 docs/DYNAMIC_CANVAS.md）：格数 G = 实际镜数，不再是 N × 3。
 镜头卡可带可选字段 segment（第几段，从 1 开始）；不带时按旧约定推断（每 3 镜一段），旧稿不受影响。
 同段重复构图（景别 + 机位 + 环境 + 出场人物完全相同）即不通过，合并为 1 格。
@@ -14,7 +15,7 @@ SCALES = {"EWS","WS","MS-FULL","MS","MCU","CU","ECU","INS"}
 ANGLES = {"EL","LOW","HIGH","DUTCH","TOP","AERIAL","OTS","POV"}
 MOVES = {"STATIC","PUSH","PULL","PAN","TRACK","FOLLOW","CRANE","ORBIT","WHIP","ZOOM"}
 REQUIRED = ["id","scale","angle","camera_side","move","comp","light","color",
-            "action_start","action_end","env","first","last","emotion"]
+            "action_start","action_end","moving","move_reason","env","first","last","emotion"]
 
 def main():
     shots = json.load(open(sys.argv[1], encoding='utf-8'))
