@@ -1,4 +1,4 @@
-# 风格档案：白狐风 · 新中式角色插画（完整提示词合集，v3.4 新增）
+# 风格档案：白狐风 · 新中式角色插画（完整提示词合集，v3.4 新增，v3.6 改版）
 # 来源：独立 Skill ~/workspace/custom-skills/whitefox-style/（2026-11-05 反推自 Mady Yang 视频 + 用户参考图，
 # 5 轮视频测试 + 8 张抽卡定型；2026-11-06 用户找到风格名“新中式角色插画”）。
 # 本文件是该 Skill 提示词的整合版：风格块 + 人物构成块 + 群像块 + 场景槽 + 8 张比例卡 + 图/视频拼装模板，
@@ -7,13 +7,13 @@
 # 必须带人物构成、群像、场景槽和比例卡才能复现，故破例整合成一张大卡。
 # 触发（仅显式调用）：只有用户说出 白狐风 / 白狐风格 / 现代水墨重彩 / 新中式角色插画（或“用白狐风 Skill”）时才用本卡；
 # 没说触发词时绝不套用，也不进 scripts/suggest_style.py 的自动建议。
-# 工作流：先抽卡（下面 proportions 里抽一张）出图、用户挑一张，再按挑中的卡出视频；每次生成必须带一张参考图（比例卡或用户原图）。
-# 文字规则（与 v3.3 通则的关系）：本风格画面永无文字——场景里不画牌匾招牌，空白墙代替；v3.3 管的是“画面里出现文字时用什么语言”，
-# 本风格是不出现文字，两者不冲突。
+# 工作流（v3.6）：出图不用抽卡，直接按提示词出图；出视频时以生成的图为参考图。比例仍从下面 proportions 里挑一个（随机或用户指定），只写进提示词，不再配参考图；比例卡保留作可选参考。
+# 文字规则（v3.6）：画面内文字可以用汉字（春联、牌匾、灯笼字等），按场景需要出现；只许汉字，不许其他语言字母；字要写对，不许乱码错字。与 v3.3 通则一致。
+# 构图规则（v3.6）：构图按场景走——场景需要多少元素就画多少，不硬凑留白，也不硬塞；空天、地面、房子、人物按场景的实际需要留，不再锁死“空天占半幅以上、一屋一树”。
 # 只管画面：本卡只定画面风格，不管故事、剧本、时长、分镜——那些仍走通用故事工作流；被触发时两者配合，风格以本卡为准。
 id: whitefox
 alias: 白狐风（简称）/ 新中式角色插画
-desc_zh: "新中式角色插画：修长人物、无脸或弱五官、书写性线条、留白、水粉笔刷、扁平透视；简笔画主体人物（极简五官、单色或纹样长袍）、蓬松白兽、徽派白墙黑瓦、大留白、画面永无文字"
+desc_zh: "新中式角色插画：修长人物、无脸或弱五官、书写性线条、水粉笔刷、扁平透视；简笔画主体人物（极简五官、单色或纹样长袍）、蓬松白兽、徽派白墙黑瓦；构图按场景走，画面内文字可用汉字"
 triggers:
   - 白狐风
   - 白狐风格
@@ -21,7 +21,7 @@ triggers:
   - 新中式角色插画
 
 # prompt 栏 = 风格块（固定，不含场景——场景另写 scene 槽）。通用流程只读 prompt 栏时，仍能拿到风格主体。
-prompt: "New Chinese-style character illustration, painterly gouache: opaque paint applied with a brush, visible dry-brush strokes and a hand-painted texture, thin fluid calligraphic strokes, flattened painterly perspective. Elongated slender figures with faceless or barely-suggested features, identity carried by a clean silhouette, a hint of an eye and a few key shapes; robe folds, hair strands and poses drift with rhythm. The colors are clean and opaque, not transparent watercolor, not bleeding, not blotchy, not flat vector color blocks. The sky is a flat pale blue with a subtle brushed texture, the ground is a flat band, robes and buildings are opaque flat colors with visible brush strokes. Only three things are soft: the hanging willow foliage (feathery vertical strands), the beast's tail dissolving into a white cloud, and the soft edge of the beast's white fur. Low-saturation base of white, grey-green and pale blue, accented with orange-red and vermilion lanterns. The frame is mostly empty: vast flat pale blue sky takes up more than half the frame, flat empty ground, large negative space. Absolutely no text, no letters, no signs, no plaques, no banners, no writing of any kind on any surface, all walls blank."
+prompt: "New Chinese-style character illustration, painterly gouache: opaque paint applied with a brush, visible dry-brush strokes and a hand-painted texture, thin fluid calligraphic strokes, flattened painterly perspective. Elongated slender figures with faceless or barely-suggested features, identity carried by a clean silhouette, a hint of an eye and a few key shapes; robe folds, hair strands and poses drift with rhythm. The colors are clean and opaque, not transparent watercolor, not bleeding, not blotchy, not flat vector color blocks. The sky is a flat pale blue with a subtle brushed texture, the ground is a flat band, robes and buildings are opaque flat colors with visible brush strokes. Only three things are soft: the hanging willow foliage (feathery vertical strands), the beast's tail dissolving into a white cloud, and the soft edge of the beast's white fur. Low-saturation base of white, grey-green and pale blue, accented with orange-red and vermilion lanterns. Composition follows the scene: as much sky, ground and negative space as the scene needs, no forced emptiness and no forced fullness; the number of houses, trees and figures follows the scene. Chinese characters may appear where the scene calls for them (couplets, plaques, lanterns), written correctly in Chinese; no letters of any other language, no garbled or misspelled characters."
 
 # 人物构成块（画面有人物时用，原样拼在 {内容} 的人物描述后）。
 # 整个人约 5 个扁平色块：小圆脸侧面（一点小眼睛 + 鼻线微凸，其余全空白，无嘴、无眉；近景眼睛是一条闭眼弯线，女子脸可带一点粉色腮红）、
@@ -63,13 +63,14 @@ crowd_block: "the onlookers are all different people, never identical: a tall ma
 # 场景槽（每次必写，二选一）。场景是变量，不是锁定项。
 # 用户指定了场景：把用户说的场景写成同样格式的一句英文，只写用户说的元素 + 必要的地面天空，不许再出现默认的白墙黑瓦房子。
 # 用户没指定场景：写下面默认徽派句。
-scene_default: "White Huizhou walls and dark green tile roofs, red lanterns, soft washed trees dissolving into the sky, pale blue sky, flat green ground, only one house and one tree."
+scene_default: "White Huizhou walls and dark green tile roofs, red lanterns, soft washed trees dissolving into the sky, pale blue sky, flat green ground."
 scene_example_garden: "a quiet garden with flowering branches, a low white garden wall, a stone path, pale blue sky, flat green ground, only a few flowering trees"
 
 # 比例表（8 个已验证，图在 data/styles/whitefox/card_<id>.webp）。
 # 比例只管身形，不管物种——比例和动物是两个独立变量，比例表里的动物只是示例。
 # 用户细说比例时按描述新建一条，格式相同；用户说随机时掷 1–8 抽一张；一次生成只用一个比例，不混用。
-# 动物不固定：用户指定了就用指定的；用户没指定就随机生成一个（不默认狐狸）；随机出的动物仍套用本风格（蓬松白毛、抽象极简脸、大留白）。
+# v3.6：出图不用抽卡，比例只写进提示词；比例卡保留作可选参考。
+# 动物不固定：用户指定了就用指定的；用户没指定就随机生成一个（不默认狐狸）；随机出的动物仍套用本风格（蓬松白毛、抽象极简脸）。
 proportions:
   - id: A
     name: 小头大身子短脚
@@ -105,17 +106,17 @@ proportions:
     ref: data/styles/whitefox/card_h.webp
 
 # 拼装模板（{内容} = 这一镜/这一段要画的事；{比例 fragment} 从上面 proportions 里取；{场景} 按 scene 规则写）。
-# 图片：一次最多 4 张（工具上限），每张一个比例。
-image_template: "Use this image as the style reference. {比例 fragment} {内容}. {人物构成块（有人物时）} {群像块（多人时）} {场景} {风格块} Wide 16:9 composition."
-# 视频：参考图用挑中的卡（或用户原图）；10 秒一段；动作只写一种：缓慢走、漂浮、骑行。
+# 图片（v3.6）：不用抽卡、不用参考图，直接按提示词出图；一次最多 4 张（工具上限），每张一个比例。
+image_template: "{比例 fragment} {内容}. {人物构成块（有人物时）} {群像块（多人时）} {场景} {风格块} Wide 16:9 composition."
+# 视频：参考图用生成的图（不再是抽中的卡）；10 秒一段；动作只写一种：缓慢走、漂浮、骑行。
 video_template: "Continue from this exact frame. {比例 fragment} {内容}. {人物构成块（有人物时）} {群像块（多人时）} {场景} {风格块} Slow horizontal pan, quiet dreamy folk-tale mood."
 
 # 已知的模型顽固点（别再踩）。
-# 视频爱把画面填满、爱在门上加牌匾：只写 "no text" 压不住，结构上避——宁可画空白墙、不要带牌匾的拱门；镜头拉远，人兽占画面小、空天占上三分之二。
+# 牌匾春联上的字爱写崩：字要写对才算过，乱码错字不通过；汉字现在是允许的，写对才是标准。构图按场景走，不再硬性要求空天占上三分之二。
 # 人脸爱往细了画：必须写死极简五官（见 character_block），别写 "no eyes, no nose, no mouth"。
 # 兽爱往写实画（腿、鬃毛、肌肉线条）：必须写 "soft abstract shape"、animal_face 那句。
 # 水彩过重 / 色块过平两个极端都错：原片是水粉笔刷——不透明颜料 + 可见干笔笔触 + 扁平透视；必须写 "painterly gouache, visible dry-brush strokes, opaque colors"，并写 "not transparent watercolor, not flat vector color blocks"。
 # 软的只有三处：垂柳、兽尾白云、兽毛边缘；其余天空、地面、建筑、袍子、人物全部实色硬边。
 # 验收：抽 0.5 秒 / 5 秒 / 9.9 秒三帧，对照检查——比例对不对、笔刷虚实对不对、人物构成对不对（5 个扁平色块、长袍占全身三分之二、脸是极简五官）、
-# 群像人物是不是各不相同、场景对不对（用户指定的场景有没有落地、默认的房子有没有不该出现）、留白够不够、有没有文字、配色对不对。
+# 群像人物是不是各不相同、场景对不对（用户指定的场景有没有落地、默认的房子有没有不该出现）、构图是不是按场景走（该空的空、该满的满）、画面内文字是不是汉字、有没有乱码错字、配色对不对。
 # 哪项 miss 就点名那一项重出，不整体改写提示词。
