@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""镜头卡审计（v1.9；v3.7：必填字段 14 → 16，加 moving、move_reason）。
+"""镜头卡审计（v1.9；v3.7：必填字段 14 → 16，加 moving、move_reason；
+v3.10：首尾帧分连续/切换——切换镜的首帧是本镜自己的开场，不是上一镜尾帧的静止复刻）。
 用法：python3 scripts/check_shotcard.py shots.json
 输入：[{"id":1,"scale":"MCU","angle":"EL","camera_side":"left","move":"STATIC",
 "comp":"THIRDS","light":"top-left hard 5600K","color":"grey-brown 70%",
@@ -30,10 +31,28 @@ def main():
             fails.append(f"镜 {s.get('id')} 机位 {s.get('angle')} 不在短码表")
         if s.get('move') not in MOVES:
             fails.append(f"镜 {s.get('id')} 运镜 {s.get('move')} 不在短码表")
-    # 首尾帧衔接：下一镜 first 必须等于上一镜 last（逐字复用）
+    # 首尾帧衔接（v3.10：分连续/切换两种转场）
+    # continuous（默认，缺字段即连续）：下一镜 first 必须等于上一镜 last（逐字复用）。
+    # cut（切到新主体/新角度/新地点）：下一镜 first 必须是不等于上一镜 last 的本镜开场
+    #   （新主体已在动中），且切换必须真实改变 characters / env / scale 三者至少其一，
+    #   否则是贴错标签的连续镜。影视逻辑：切到新镜头时，开场是新镜头自己的画面，
+    #   不是上一镜尾帧的静止复刻；动作/声音跨切衔接，不靠首帧复刻。
     for a, b in zip(shots, shots[1:]):
-        if a.get('last') and b.get('first') and a['last'] != b['first']:
-            fails.append(f"镜 {a['id']}→{b['id']} 首尾帧不衔接：尾帧≠下镜首帧")
+        t = b.get('transition') or 'continuous'
+        if t not in ('continuous', 'cut'):
+            fails.append(f"镜 {b.get('id')} transition {t!r} 不合法，只许 continuous / cut")
+            continue
+        if t == 'continuous':
+            if a.get('last') and b.get('first') and a['last'] != b['first']:
+                fails.append(f"镜 {a['id']}→{b['id']} 首尾帧不衔接：尾帧≠下镜首帧")
+        else:
+            if a.get('last') and b.get('first') and a['last'] == b['first']:
+                fails.append(f"镜 {a['id']}→{b['id']} 是切换却用了上一镜尾帧当首帧：切换镜的开场是本镜自己的画面，不是上一镜的静止复刻")
+            changed = (a.get('characters') != b.get('characters') or
+                       a.get('env') != b.get('env') or
+                       a.get('scale') != b.get('scale'))
+            if not changed:
+                fails.append(f"镜 {a['id']}→{b['id']} 标了切换却没换主体/地点/景别：不是真切换，改回 continuous")
     # 连续同景别 ≤2（v3.2 修正：只看同一主角。反打轮流换人时，同景别连拍不算单调）
     for i in range(len(shots)-2):
         same_scale = shots[i].get('scale') == shots[i+1].get('scale') == shots[i+2].get('scale')
