@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 """镜头卡审计（v1.9；v3.7：必填字段 14 → 16，加 moving、move_reason；
-v3.10：首尾帧分连续/切换——切换镜的首帧是本镜自己的开场，不是上一镜尾帧的静止复刻）。
+v3.10：首尾帧分连续/切换——切换镜的首帧是本镜自己的开场，不是上一镜尾帧的静止复刻；
+v3.16：短码表扩到 docs/CAMERA_MOVES.md——机位加 WORM（极低机位仰拍）、WAIST（过腰），
+运镜加 RACK（焦点转移）、CRASHZOOM（急推）、DOLLY（滑轨）、HANDHELD（手持）、
+SLOWMO（慢动作）、ONETAKE（一镜到底）、STEP（抽帧）。
+v3.20：节奏——可选字段 tempo（快/中/慢，缺字段按 中 计，旧稿不受影响）、beats（1–3，
+缺字段按 1 计）；慢动作 SLOWMO 全片最多 1 次，连续两镜不许都是慢动作，快 tempo 的镜
+不许用 SLOWMO（快慢矛盾）。
 用法：python3 scripts/check_shotcard.py shots.json
 输入：[{"id":1,"scale":"MCU","angle":"EL","camera_side":"left","move":"STATIC",
 "comp":"THIRDS","light":"top-left hard 5600K","color":"grey-brown 70%",
@@ -13,8 +19,10 @@ v3.10：首尾帧分连续/切换——切换镜的首帧是本镜自己的开�
 import json, sys
 
 SCALES = {"EWS","WS","MS-FULL","MS","MCU","CU","ECU","INS"}
-ANGLES = {"EL","LOW","HIGH","DUTCH","TOP","AERIAL","OTS","POV"}
-MOVES = {"STATIC","PUSH","PULL","PAN","TRACK","FOLLOW","CRANE","ORBIT","WHIP","ZOOM"}
+ANGLES = {"EL","LOW","WORM","HIGH","DUTCH","TOP","AERIAL","OTS","POV","WAIST"}
+MOVES = {"STATIC","PUSH","PULL","PAN","TRACK","FOLLOW","CRANE","ORBIT","WHIP","ZOOM",
+         "RACK","CRASHZOOM","DOLLY","HANDHELD","SLOWMO","ONETAKE","STEP"}
+TEMPOS = {"快","中","慢"}
 REQUIRED = ["id","scale","angle","camera_side","move","comp","light","color",
             "action_start","action_end","moving","move_reason","env","first","last","emotion"]
 
@@ -31,6 +39,20 @@ def main():
             fails.append(f"镜 {s.get('id')} 机位 {s.get('angle')} 不在短码表")
         if s.get('move') not in MOVES:
             fails.append(f"镜 {s.get('id')} 运镜 {s.get('move')} 不在短码表")
+        # 节奏（v3.20）：可选字段，缺字段按 中 计，旧稿不受影响
+        if s.get('tempo') is not None and s.get('tempo') not in TEMPOS:
+            fails.append(f"镜 {s.get('id')} 节奏 {s.get('tempo')} 不合法，只许 快 / 中 / 慢")
+        if s.get('beats') is not None and s.get('beats') not in (1, 2, 3):
+            fails.append(f"镜 {s.get('id')} 动作数 beats {s.get('beats')} 不合法，只许 1–3")
+        if (s.get('tempo') or '中') == '快' and s.get('move') == 'SLOWMO':
+            fails.append(f"镜 {s.get('id')} 节奏是快却用了慢动作 SLOWMO：快慢矛盾，改 tempo 为 慢 或换运镜")
+    # 慢动作上限（v3.20）：全片最多 1 次，连续两镜不许都是慢动作
+    slowmo = [s.get('id') for s in shots if s.get('move') == 'SLOWMO']
+    if len(slowmo) > 1:
+        fails.append(f"慢动作 SLOWMO 全片 {len(slowmo)} 次（镜 {slowmo}），最多 1 次：其余冲击点改快动作 + 硬切")
+    for a, b in zip(shots, shots[1:]):
+        if a.get('move') == 'SLOWMO' and b.get('move') == 'SLOWMO':
+            fails.append(f"镜 {a.get('id')}→{b.get('id')} 连续两镜都是慢动作：慢动作不许连用")
     # 首尾帧衔接（v3.10：分连续/切换两种转场）
     # continuous（默认，缺字段即连续）：下一镜 first 必须等于上一镜 last（逐字复用）。
     # cut（切到新主体/新角度/新地点）：下一镜 first 必须是不等于上一镜 last 的本镜开场

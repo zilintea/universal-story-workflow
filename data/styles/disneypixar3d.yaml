@@ -3,5 +3,5 @@
 # 提示词只用下面 prompt 栏的描述性字段。
 id: disneypixar3d
 alias: 迪士尼与皮克斯3D（简称）
-prompt: "high-gloss stylized 3D animation, round soft shapes, big expressive eyes, detailed fur and fabric, subsurface scattering, saturated warm colors, soft golden light, cinematic camera, heartfelt family-film look"
-desc_zh: "高光泽风格化3D动画，圆润造型，大眼睛，精细毛发与布料，次表面散射，饱和暖色，柔和金光，电影级运镜，合家欢质感"
+prompt: "high-gloss stylized 3D animation, round soft shapes, chubby readable silhouette, large expressive eyes with visible whites and directional gaze conveying emotion, detailed fur with visible individual strands not smooth plastic, detailed fabric, subsurface scattering, saturated warm colors, soft golden light with depth, cinematic camera, heartfelt family-film look"
+desc_zh: "高光泽风格化3D动画，圆润造型，敦实可辨的剪影，大眼睛带可见眼白、视线传情，精细毛发见根见丝不塑料，精细布料，次表面散射，饱和暖色，柔和金光有纵深，电影级运镜，合家欢质感"

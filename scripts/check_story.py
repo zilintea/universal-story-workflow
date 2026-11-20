@@ -26,6 +26,21 @@
   缺字段、路径为空、文件不存在，任一即不通过，不进故事板。
   characters 缺失时跳过（v3.1 之前的旧稿不受影响）。见 docs/CHARACTER_CONSISTENCY.md。
   生成视频的参考图必须是三视图，不许拿 9 格故事板当人物参考。
+物品画布硬门 + 无限主画布（v3.11）：故事 JSON 有 items 字段时，item_sheet 与
+  master_canvas 字段必填，且指向的文件必须存在；缺字段、路径为空、文件不存在，
+  任一即不通过，不进视频。items 缺失时跳过，v3.11 之前的旧稿不受影响。
+  见 docs/ITEM_CANVAS.md、docs/MASTER_CANVAS.md。
+生长序列（v3.13）：故事 JSON 有 growth_sequences 字段时，每阶段 item_sheet
+  文件必须存在，master_canvas 字段必填且文件必须存在；缺字段、路径为空、
+  文件不存在，任一即不通过。无该字段时跳过，旧稿不受影响。
+  无出场人物时 characters 字段为空，character_sheet 可空，脚本跳过三视图硬门，
+  主角登记为生长主体 P1（见 docs/GROWTH_SEQUENCE.md）。
+无限画布（v3.16）：故事 JSON 有 infinite_canvas 字段时，指向的画布文件
+  必须存在；无该字段时跳过，旧稿不受影响。画布在视频生成前输出（关卡 2.5），
+  见 docs/INFINITE_CANVAS.md。
+拍摄剧本（v3.17）：故事 JSON 有 screenplay 字段时，指向的剧本文件
+  必须存在；无该字段时跳过，旧稿不受影响。剧本按标准电影剧本格式输出，
+  见 docs/SCREENPLAY_FORMAT.md。
 语言参数：目标语言、句长上限、词数规则一律读 data/languages/<code>.yaml，
 脚本里不写死任何一种语言。发音和语音合成不在本技能范围内，用户自行合成或调用语音 API。
 文化锚点（v2.7）：故事 JSON 可带可选字段 culture（五类：clothing/food/props/landscape/colors），
@@ -150,6 +165,156 @@ def check_character_sheet(story, base_dir):
         p = Path(base_dir) / p
     return [("三视图文件存在（character_sheet 指向的文件可读）", p.is_file())]
 
+def check_item_canvas(story, base_dir):
+    """物品画布硬门 + 无限主画布（v3.11）：有 items 字段时，item_sheet 与
+    master_canvas 必填且文件必须存在。items 缺失时跳过，旧稿不受影响。"""
+    if not story.get("items"):
+        return []
+    results = []
+    for field in ("item_sheet", "master_canvas"):
+        sheet = (story.get(field) or "").strip()
+        if not sheet:
+            results.append((f"{field} 已写（字段 {field} 非空）", False))
+            continue
+        p = Path(sheet)
+        if not p.is_absolute() and base_dir:
+            p = Path(base_dir) / p
+        results.append((f"{field} 指向的文件存在（{field} 可读）", p.is_file()))
+    return results
+
+def check_growth_sequence(story, base_dir):
+    """生长序列（v3.13）：有 growth_sequences 字段时，每阶段 item_sheet 文件
+    必须存在，master_canvas 字段必填且文件必须存在。无该字段时跳过，旧稿不受影响。
+    阶段 id 在同一主体内唯一；阶段无 item_sheet 即不通过。"""
+    seqs = story.get("growth_sequences")
+    if not seqs:
+        return []
+    results = []
+    for seq in seqs:
+        sid = seq.get("id") or "?"
+        stages = seq.get("stages") or []
+        results.append((f"生长主体 {sid} 有阶段（stages 非空）", bool(stages)))
+        seen = set()
+        for st in stages:
+            stage_id = (st.get("id") or "").strip()
+            results.append((f"阶段 {stage_id or '?'} 编号非空", bool(stage_id)))
+            results.append((f"阶段 {stage_id or '?'} 编号不重复", stage_id not in seen))
+            seen.add(stage_id)
+            sheet = (st.get("item_sheet") or "").strip()
+            if not sheet:
+                results.append((f"阶段 {stage_id or '?'} 的 item_sheet 已写", False))
+                continue
+            p = Path(sheet)
+            if not p.is_absolute() and base_dir:
+                p = Path(base_dir) / p
+            results.append((f"阶段 {stage_id or '?'} 的 item_sheet 文件存在", p.is_file()))
+    sheet = (story.get("master_canvas") or "").strip()
+    if not sheet:
+        results.append(("生长序列有主画布（字段 master_canvas 非空）", False))
+    else:
+        p = Path(sheet)
+        if not p.is_absolute() and base_dir:
+            p = Path(base_dir) / p
+        results.append(("生长序列的主画布文件存在（master_canvas 可读）", p.is_file()))
+    return results
+
+def check_historical_process(story, base_dir):
+    """历史过程（v3.15）：有 historical_process 字段时，每建造阶段 item_sheet
+    文件必须存在，time_jump_line 字段必填且至少 2 个间隔。无该字段时跳过，旧稿不受影响。"""
+    procs = story.get("historical_process")
+    if not procs:
+        return []
+    results = []
+    for proc in procs:
+        pid = proc.get("id") or "?"
+        stages = proc.get("stages") or []
+        results.append((f"历史主体 {pid} 有建造阶段（stages 非空）", bool(stages)))
+        seen = set()
+        for st in stages:
+            stage_id = (st.get("id") or "").strip()
+            results.append((f"建造阶段 {stage_id or '?'} 编号非空", bool(stage_id)))
+            results.append((f"建造阶段 {stage_id or '?'} 编号不重复", stage_id not in seen))
+            seen.add(stage_id)
+            sheet = (st.get("item_sheet") or "").strip()
+            if not sheet:
+                results.append((f"建造阶段 {stage_id or '?'} 的 item_sheet 已写", False))
+                continue
+            p = Path(sheet)
+            if not p.is_absolute() and base_dir:
+                p = Path(base_dir) / p
+            results.append((f"建造阶段 {stage_id or '?'} 的 item_sheet 文件存在", p.is_file()))
+    tjl = story.get("time_jump_line")
+    results.append(("历史过程有时间跳跃线（字段 time_jump_line 非空）", bool(tjl)))
+    results.append(("时间跳跃线至少 2 个间隔（多年工程不压缩成一天）",
+                    bool(tjl) and len(tjl) >= 2))
+    return results
+
+def check_process_shots(story, base_dir):
+    """过程镜（v3.14）：有 shots 字段时，带 process 的镜 from_stage/to_stage
+    必须是同一生长主体的相邻阶段，且每个相邻阶段交界处至少有一镜过程镜覆盖。
+    无 shots 字段时跳过，旧稿不受影响。"""
+    seqs = story.get("growth_sequences")
+    shots = story.get("shots")
+    if not seqs or not shots:
+        return []
+    results = []
+    order = {}
+    for seq in seqs:
+        sid = seq.get("id") or "?"
+        ids = [(st.get("id") or "").strip() for st in (seq.get("stages") or [])]
+        order[sid] = ids
+    covered = set()
+    for shot in shots:
+        proc = shot.get("process")
+        if not proc:
+            continue
+        frm = (proc.get("from_stage") or "").strip()
+        to = (proc.get("to_stage") or "").strip()
+        subj = None
+        for sid, ids in order.items():
+            if frm in ids and to in ids:
+                subj = sid
+                break
+        results.append((f"过程镜 {frm}→{to} 两阶段属同一主体", subj is not None))
+        if subj is None:
+            continue
+        ids = order[subj]
+        adjacent = abs(ids.index(frm) - ids.index(to)) == 1
+        results.append((f"过程镜 {frm}→{to} 两阶段相邻", adjacent))
+        if adjacent:
+            covered.add((subj, frm, to))
+    for sid, ids in order.items():
+        for a, b in zip(ids, ids[1:]):
+            results.append((f"阶段交界 {a}→{b} 有过程镜覆盖",
+                            (sid, a, b) in covered or (sid, b, a) in covered))
+    return results
+
+def check_screenplay(story, base_dir):
+    """拍摄剧本（v3.17）：有 screenplay 字段时，指向的剧本文件必须存在。
+    无该字段时跳过，旧稿不受影响。"""
+    if not story.get("screenplay"):
+        return []
+    sheet = (story.get("screenplay") or "").strip()
+    if not sheet:
+        return [("拍摄剧本文件已写（字段 screenplay 非空）", False)]
+    p = Path(sheet)
+    if not p.is_absolute() and base_dir:
+        p = Path(base_dir) / p
+    return [("拍摄剧本文件存在（screenplay 指向的文件可读）", p.is_file())]
+
+def check_infinite_canvas(story, base_dir):
+    """无限画布（v3.16）：有 infinite_canvas 字段时，指向的画布文件必须存在。
+    无该字段时跳过，旧稿不受影响。"""
+    if not story.get("infinite_canvas"):
+        return []
+    sheet = (story.get("infinite_canvas") or "").strip()
+    if not sheet:
+        return [("无限画布文件已写（字段 infinite_canvas 非空）", False)]
+    p = Path(sheet)
+    if not p.is_absolute() and base_dir:
+        p = Path(base_dir) / p
+    return [("无限画布文件存在（infinite_canvas 指向的文件可读）", p.is_file())]
+
 def check(story, prof, mode="general", base_dir=None):
     text = story.get("text", "") + " ".join(t for t, _, _ in dialogue_lines(story))
     low = text.lower()
@@ -162,6 +327,12 @@ def check(story, prof, mode="general", base_dir=None):
     results.extend(check_characters(story))
     results.extend(check_flags(story))
     results.extend(check_character_sheet(story, base_dir))
+    results.extend(check_item_canvas(story, base_dir))
+    results.extend(check_growth_sequence(story, base_dir))
+    results.extend(check_historical_process(story, base_dir))
+    results.extend(check_process_shots(story, base_dir))
+    results.extend(check_infinite_canvas(story, base_dir))
+    results.extend(check_screenplay(story, base_dir))
     if mode == "teaching":
         results.append(("词汇 ≤5 个", len(story.get("vocab", [])) <= 5))
         results.append(("句型 ≤2 个", len(story.get("patterns", [])) <= 2))
