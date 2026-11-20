@@ -1,0 +1,7 @@
+# 风格档案：低多边形
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: lowpoly
+alias: 低多边形
+prompt: "3D low-poly art, faceted geometric surfaces, flat clean colors, sharp triangular planes, minimalist forms, soft studio light, crisp modern game look"
+desc_zh: "3D 低多边形艺术，面片几何，扁平干净配色，三角形面锐利，造型极简，柔和棚拍光，现代游戏感"

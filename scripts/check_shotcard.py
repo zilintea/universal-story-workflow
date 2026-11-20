@@ -4,11 +4,12 @@ v3.10：首尾帧分连续/切换——切换镜的首帧是本镜自己的开�
 v3.16：短码表扩到 docs/CAMERA_MOVES.md——机位加 WORM（极低机位仰拍）、WAIST（过腰），
 运镜加 RACK（焦点转移）、CRASHZOOM（急推）、DOLLY（滑轨）、HANDHELD（手持）、
 SLOWMO（慢动作）、ONETAKE（一镜到底）、STEP（抽帧）。
-v3.20：节奏——可选字段 tempo（快/中/慢，缺字段按 中 计，旧稿不受影响）、beats（1–3，
-缺字段按 1 计）；慢动作 SLOWMO 全片最多 1 次，连续两镜不许都是慢动作，快 tempo 的镜
-不许用 SLOWMO（快慢矛盾）。
+v3.24：必填字段 16 → 18，加 camera_pos（场景设定板平面图上的机位编号，如“机位 1”，
+与设定板对得上，不凭空发明）、anchor（本镜画面里的场景锚点物，如“大荷叶上的绿青蛙”，
+与场景设定板定的锚点物一致）。
 用法：python3 scripts/check_shotcard.py shots.json
 输入：[{"id":1,"scale":"MCU","angle":"EL","camera_side":"left","move":"STATIC",
+"camera_pos":"机位 1","anchor":"大荷叶",
 "comp":"THIRDS","light":"top-left hard 5600K","color":"grey-brown 70%",
 "action_start":"...","action_end":"...","moving":"...","move_reason":"...",
 "env":"...","first":"...","last":"...","emotion":7}]
@@ -23,7 +24,7 @@ ANGLES = {"EL","LOW","WORM","HIGH","DUTCH","TOP","AERIAL","OTS","POV","WAIST"}
 MOVES = {"STATIC","PUSH","PULL","PAN","TRACK","FOLLOW","CRANE","ORBIT","WHIP","ZOOM",
          "RACK","CRASHZOOM","DOLLY","HANDHELD","SLOWMO","ONETAKE","STEP"}
 TEMPOS = {"快","中","慢"}
-REQUIRED = ["id","scale","angle","camera_side","move","comp","light","color",
+REQUIRED = ["id","scale","angle","camera_side","move","camera_pos","anchor","comp","light","color",
             "action_start","action_end","moving","move_reason","env","first","last","emotion"]
 
 def main():

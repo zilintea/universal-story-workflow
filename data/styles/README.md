@@ -8,7 +8,7 @@
 不进图生图/图生视频/文生视频的提示词。
 用户明确要求原样写品牌名时，才按用户的话写，并记在文字稿里。
 
-常用风格先写在这里：ghibli、pixar3d、disneypixar3d、stopmotion、liveaction、inkwash、cel2d、guoman3d（v2.9 新增，3D国漫CG：金青色调、丁达尔光束、灵力粒子、水墨粒子，仙侠/神话主推）、whitefox（v3.4 新增，v3.6 改版，白狐风 · 新中式角色插画）。
+常用风格先写在这里：ghibli、pixar3d、disneypixar3d、stopmotion、liveaction、inkwash、cel2d、guoman3d（v2.9 新增，3D国漫CG：金青色调、丁达尔光束、灵力粒子、水墨粒子，仙侠/神话主推）、whitefox（v3.4 新增，v3.6 改版，白狐风 · 新中式角色插画）。**v3.27 新增 12 张**：flat2d（扁平插画）、oilpainting（油画）、cyberpunk（赛博朋克）、pixelart（像素风）、papercut（剪纸）、shadowpuppet（皮影）、watercolor（水彩）、wongkarwai（王家卫）、dunhuang（敦煌壁画）、picturebook（绘本）、sketch（素描线稿）、lowpoly（低多边形）。共 21 张卡，信号映射见 `scripts/suggest_style.py`。
 用户新说一个风格，就新加一张卡，不改流程。
 新风格卡只写 5 行：质感、人物、颜色、光线、运镜。
 

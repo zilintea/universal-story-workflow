@@ -1,0 +1,7 @@
+# 风格档案：敦煌壁画
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: dunhuang
+alias: 敦煌壁画
+prompt: "Dunhuang mural art, mineral pigments, ochre red and lapis blue, flowing ribbon lines, flying apsaras, ancient Chinese Buddhist art, weathered wall texture, serene sacred mood"
+desc_zh: "敦煌壁画艺术，矿物颜料，赭红与石青，飘带线条流畅，飞天，古代中国佛教艺术，风化墙面质感，肃穆神圣"

@@ -48,6 +48,31 @@ TABLE = [
      "场景完全静止 + 穿梭运镜", "时间静止/子弹时间"),
     (("第一人称", "POV", "FPV", "飞剑"), "liveaction", "pixar3d",
      "视线转移写清顺序", "极限第一人称视角"),
+    # v3.27 新增风格映射（常用风格补齐）
+    (("赛博朋克", "赛博", "未来都市"), "cyberpunk", "liveaction",
+     "霓虹未来都市靠赛博朋克", None),
+    (("像素", "复古游戏", "街机", "8位", "16位"), "pixelart", "cel2d",
+     "像素块是复古游戏的本体", None),
+    (("剪纸", "年画", "民间艺术"), "papercut", "inkwash",
+     "红纸剪影合民间年味", None),
+    (("皮影", "皮影戏"), "shadowpuppet", "papercut",
+     "皮影是背光皮偶，不是剪纸", None),
+    (("水彩", "淡彩"), "watercolor", "ghibli",
+     "透明晕染合轻盈题材", None),
+    (("王家卫", "文艺片", "雨夜霓虹"), "wongkarwai", "liveaction",
+     "潮湿霓虹 + 抽帧 + 浅景深是王家卫的招牌", None),
+    (("敦煌", "飞天", "壁画"), "dunhuang", "inkwash",
+     "矿物颜料与飞天合敦煌", None),
+    (("绘本", "睡前故事", "幼儿"), "picturebook", "ghibli",
+     "蜡笔水彩合睡前绘本", None),
+    (("素描", "线稿", "速写"), "sketch", "liveaction",
+     "铅笔排线合草稿手绘感", None),
+    (("低多边形", "几何", "扁平3D"), "lowpoly", "pixar3d",
+     "面片几何合极简游戏感", None),
+    (("扁平", "插画", "科普", "讲解"), "flat2d", "cel2d",
+     "大色块扁平合科普讲解", None),
+    (("油画", "古典油画", "肖像画"), "oilpainting", "liveaction",
+     "厚重笔触与明暗合古典油画", None),
 ]
 
 def suggest(prompt):
@@ -58,8 +83,12 @@ def suggest(prompt):
             if scenario:
                 out["scenario"] = scenario
             return out
-    return {"primary": "pixar3d", "alternative": "ghibli",
-            "reason": "默认最稳组合", "matched": []}
+    # v3.26：无匹配信号时不再默认 3D。风格跟提示词走，没有默认风格；
+    # 未指定时 primary/alternative 为 null，剧本风格栏写“未指定”，
+    # 提示词只写内容本身的视觉语言，不混入任何风格卡的描述。
+    return {"primary": None, "alternative": None,
+            "reason": "无匹配信号，风格未指定——按内容推断或由用户定，不默认 3D",
+            "matched": []}
 
 if __name__ == "__main__":
     print(json.dumps(suggest(" ".join(sys.argv[1:])), ensure_ascii=False, indent=1))

@@ -1,0 +1,7 @@
+# 风格档案：扁平插画
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: flat2d
+alias: 扁平插画
+prompt: "flat vector illustration, clean geometric shapes, bold solid colors, minimal shading, crisp edges, simple readable characters, modern graphic design look"
+desc_zh: "扁平插画，几何造型干净利落，大色块，极少阴影，边缘清晰，人物简洁可读，现代平面设计感"

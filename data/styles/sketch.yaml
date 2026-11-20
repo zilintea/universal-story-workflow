@@ -1,0 +1,7 @@
+# 风格档案：素描线稿
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: sketch
+alias: 素描线稿
+prompt: "pencil sketch and line art, visible hatching and cross-hatching, monochrome graphite, rough expressive strokes, white paper background, hand-drawn draft feel"
+desc_zh: "铅笔素描线稿，排线与交叉排线可见，单色石墨，笔触粗粝有表现力，白纸底，手绘草稿感"

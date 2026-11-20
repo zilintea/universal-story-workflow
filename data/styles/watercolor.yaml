@@ -1,0 +1,7 @@
+# 风格档案：水彩
+# 规则：品牌名只作选择简称，出现在这里的 alias 栏，不进提示词。
+# 提示词只用下面 prompt 栏的描述性字段。
+id: watercolor
+alias: 水彩
+prompt: "Western watercolor painting, transparent washes, soft bleeding edges, light and airy, delicate color gradients, white paper showing through, gentle natural light"
+desc_zh: "西方水彩，透明晕染，边缘柔和洇开，轻盈通透，色彩渐变细腻，留白见纸，自然柔光"
