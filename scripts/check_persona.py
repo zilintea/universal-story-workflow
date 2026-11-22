@@ -22,7 +22,10 @@ import sys
 from pathlib import Path
 
 FABRIC_WORDS = ["布", "棉", "麻", "丝", "绸", "毛", "皮", "衫", "衣", "袍", "裙",
-                "裤", "帽", "巾", "围巾", "鞋", "靴", "甲", "袍", "绒", "纱", "呢"]
+                "裤", "帽", "巾", "围巾", "鞋", "靴", "甲", "袍", "绒", "纱", "呢",
+                "cotton", "cloth", "silk", "wool", "linen", "fabric", "dress", "shirt",
+                "skirt", "robe", "apron", "shawl", "coat", "fur", "shorts", "scarf",
+                "hat", "shoes", "boots", "sweater", "jacket"]
 BRAND_WORDS = ["pixar", "disney", "迪士尼", "皮克斯", "ghibli", "吉卜力", "dreamworks", "梦工厂"]
 
 

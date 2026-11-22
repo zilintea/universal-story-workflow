@@ -32,12 +32,12 @@ LONG_CUE_WARN = 60            # 一段字幕超 60 字只提醒
 
 
 def split_sentences(text):
-    parts = re.split(r"[。？！!?；;\n]+", text)
+    parts = re.split(r"[。？！!?；;.\n]+", text)
     return [p.strip() for p in parts if p.strip()]
 
 
 def first_clause(s):
-    return re.split(r"[，,。？！!?；;]", s)[0]
+    return re.split(r"[，,。？！!?；;.]", s)[0]
 
 
 def count_units(text, lang):

@@ -125,7 +125,7 @@ def check_language(story, code):
                             (langs_dir / f"{lang}.yaml").is_file()))
     return results
 
-EASTERN_MARKERS = ["黑发", "黑眼睛", "东亚", "东方", "亚洲", "黄皮肤", "中国面孔"]
+EASTERN_MARKERS = ["黑发", "黑眼睛", "东亚", "东方", "亚洲", "黄皮肤", "中国面孔", "black hair", "black eyes", "black fur", "East Asian", "Asian", "Chinese"]
 FLAG_WORDS = ["国旗", "国徽", "旗帜", "五星红旗", "星条旗", "国歌"]
 
 def check_characters(story):
